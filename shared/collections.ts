@@ -31,6 +31,21 @@ export const CollabDocSchema = z.object({
 });
 export type CollabDoc = InferDocType<typeof CollabDocSchema>;
 
+export const BookSchema = z.object({
+  ownerId: z.string(),
+  title: z.string().default('Untitled Volume'),
+  coverStyle: z.enum(['oxblood', 'forest', 'plain']).default('oxblood'),
+  pages: z.array(z.string()).default(['']),
+  lecternPos: z.object({ x: z.number(), y: z.number() }).default({ x: 0, y: 0 }),
+  sharing: z
+    .object({
+      visibility: z.enum(['private', 'specific', 'public']).default('private'),
+      sharedWith: z.array(z.string()).default([]),
+    })
+    .default({ visibility: 'private', sharedWith: [] }),
+});
+export type Book = InferDocType<typeof BookSchema>;
+
 // --- Collections ---
 // meta options:
 //   cache        – cache docs in memory LRU (good for small, frequently read collections)
@@ -58,6 +73,10 @@ export const collections = defineCollections({
   collabDoc: {
     schema: CollabDocSchema,
     meta: { cache: false, trackable: false, public: false, cascadeFrom: null },
+  },
+  book: {
+    schema: BookSchema,
+    meta: { cache: false, trackable: true, public: false, cascadeFrom: null, trackKeys: ['ownerId'] },
   },
 });
 
