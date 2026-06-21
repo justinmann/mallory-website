@@ -1,5 +1,6 @@
 import React from 'react';
+import LibraryGame from '../components/LibraryGame';
 
 export default function LibraryPage(): React.ReactElement {
-  return <div data-testid="library-page">Library coming soon</div>;
+  return <LibraryGame />;
 }
