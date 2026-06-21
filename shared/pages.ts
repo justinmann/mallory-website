@@ -14,6 +14,11 @@ import { definePage, definePages } from 'ugly-app/shared';
 // Navigate to it from anywhere via: useRouter().push('route-key', params)
 export const pages = definePages({
   '': definePage<{}>({ auth: false }),
+  // Mallory's Library — the walkable game (requires login: it's your own library)
+  'library': definePage<{}>({ auth: true }),
+  // A single open book. Public/shared books render for anyone, so auth is false;
+  // read access is enforced server-side in the getBook handler.
+  'book/:bookId': definePage<{ bookId: string }>({ auth: false }),
   'auth-demo': definePage<{}>({ auth: false }),
   'user/:userId': definePage<{ userId: string }>(),
   'search': definePage<{ q?: string }>({ auth: false }),
