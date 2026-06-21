@@ -19,6 +19,7 @@ import { dbDefaults } from 'ugly-app/shared';
 import { messages, requests } from '../shared/api';
 import type { Todo } from '../shared/collections';
 import { collections } from '../shared/collections';
+import { createBookHandlers } from './bookHandlers';
 import { cronTasks } from '../shared/cron';
 import { experiments } from '../shared/experiments';
 import en from '../shared/lang/en';
@@ -40,6 +41,8 @@ const cronHandlers: WorkerHandlers<typeof cronTasks> = {
 const app = createApp(
   { requests, messages },
   {
+    ...createBookHandlers(),
+
     createTodo: async (userId, { text }) => {
       const _id = nanoid();
       const todo: Todo = { _id, userId, text, done: false, ...dbDefaults() };

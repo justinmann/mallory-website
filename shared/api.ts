@@ -14,8 +14,8 @@ const BookDoc = z.object({
     visibility: z.enum(['private', 'specific', 'public']),
     sharedWith: z.array(z.string()),
   }),
-  created: z.number(),
-  updated: z.number(),
+  // created/updated/version exist on the stored doc but the UI doesn't use them,
+  // so we leave them off the wire shape (zod strips the extras).
 });
 const BookPatch = z.object({
   title: z.string().max(200).optional(),
