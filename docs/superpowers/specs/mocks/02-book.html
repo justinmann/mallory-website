@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mallory — Open Book (dark academia mock)</title>
+<style>
+  :root{
+    --paper:#d8c8a0; --paper-2:#cbb98c; --edge:#a8946a;
+    --ink:#241a0f; --ink-soft:#5c4a30;
+    --cover:#1c130c; --brass:#c9a24b; --oxblood:#5e2b2b; --forest:#27382c;
+    --glow:#e8b84b;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;font-family:"Iowan Old Style",Georgia,serif;
+    background:radial-gradient(120% 90% at 50% 20%,#1a120c,#070504)}
+  .stage{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:18px}
+
+  .toolbar{display:flex;gap:8px;align-items:center;font-family:ui-monospace,Menlo,monospace;
+    background:rgba(10,7,6,.9);border:1px solid var(--brass);border-radius:12px;padding:8px 10px;color:var(--paper);font-size:12px}
+  .toolbar button{font:inherit;background:#1c130c;color:var(--paper);border:1px solid #4a3826;
+    border-radius:7px;padding:5px 9px;cursor:pointer}
+  .toolbar button.on{background:var(--glow);color:#1c130c;border-color:var(--glow)}
+  .toolbar .sep{width:1px;height:20px;background:#ffffff22;margin:0 2px}
+  .toolbar .share{margin-left:6px;display:flex;gap:6px;align-items:center}
+  .pill{border-radius:20px;padding:4px 10px;border:1px solid #4a3826;cursor:pointer}
+  .pill.sel{background:var(--oxblood);border-color:var(--oxblood);color:#fff}
+
+  .book{position:relative;width:min(900px,100%);aspect-ratio:16/10;
+    background:linear-gradient(#241811,var(--cover));border-radius:16px;padding:18px;
+    box-shadow:0 34px 80px rgba(0,0,0,.75),inset 0 0 0 3px #0a0706, inset 0 0 0 6px var(--brass)}
+  .pages{position:relative;height:100%;display:grid;grid-template-columns:1fr 1fr;
+    background:linear-gradient(var(--paper),var(--paper-2));border-radius:6px;overflow:hidden;
+    box-shadow:inset 0 0 80px rgba(60,40,15,.45)}
+  /* aged paper stains */
+  .pages::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background:radial-gradient(60px 40px at 18% 80%,rgba(90,60,20,.22),transparent),
+              radial-gradient(80px 50px at 82% 22%,rgba(90,60,20,.18),transparent),
+              radial-gradient(40px 30px at 60% 90%,rgba(70,45,15,.2),transparent)}
+  .spine{position:absolute;left:50%;top:0;bottom:0;width:26px;transform:translateX(-50%);z-index:3;
+    background:linear-gradient(90deg,rgba(0,0,0,0),rgba(40,25,12,.5) 45%,rgba(40,25,12,.5) 55%,rgba(0,0,0,0))}
+  .page{padding:30px 34px;overflow:hidden;position:relative}
+  .page.left{box-shadow:inset -16px 0 26px -16px rgba(40,25,12,.7)}
+  .page.right{box-shadow:inset 16px 0 26px -16px rgba(40,25,12,.7)}
+  .pageno{position:absolute;bottom:12px;font-family:ui-monospace,monospace;font-size:11px;color:var(--ink-soft)}
+  .left .pageno{right:24px} .right .pageno{left:24px}
+
+  .doc{color:var(--ink);line-height:1.55}
+  .doc h1{font-size:30px;margin:0 0 10px;border-bottom:2px solid var(--edge);padding-bottom:6px;letter-spacing:.5px}
+  .doc h2{font-size:21px;margin:16px 0 6px;color:#3a2c18}
+  .doc p{font-size:15px;margin:0 0 12px}
+  .doc ul{font-size:15px;margin:0 0 12px;padding-left:20px}
+  .doc blockquote{margin:0 0 12px;padding:6px 12px;border-left:3px solid var(--oxblood);
+    color:var(--ink-soft);font-style:italic;background:rgba(94,43,43,.08)}
+  .doc code{font-family:ui-monospace,monospace;font-size:13px;background:rgba(0,0,0,.08);padding:1px 5px;border-radius:4px}
+  .cursor{display:inline-block;width:2px;height:1.05em;background:var(--oxblood);vertical-align:-2px;animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+
+  .slash{position:absolute;left:34px;top:150px;width:214px;background:#0a0706;color:var(--paper);
+    border:1px solid var(--glow);border-radius:10px;font-family:ui-monospace,monospace;font-size:12px;
+    box-shadow:0 14px 36px rgba(0,0,0,.6);overflow:hidden;z-index:5}
+  .slash .it{padding:7px 10px;display:flex;justify-content:space-between;gap:8px}
+  .slash .it.hi{background:var(--oxblood)}
+  .slash .it span{opacity:.55}
+
+  .turn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;
+    background:rgba(10,7,6,.85);color:var(--glow);border:1px solid var(--glow);cursor:pointer;
+    font-size:20px;display:flex;align-items:center;justify-content:center;z-index:4}
+  .turn.prev{left:-10px} .turn.next{right:-10px}
+
+  .caption{font-family:ui-monospace,monospace;color:#9a8a64;font-size:12px;text-align:center;max-width:760px}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="toolbar">
+    <button>↶</button><button>↷</button>
+    <span class="sep"></span>
+    <button class="on">B</button><button><i>I</i></button><button>H1</button><button>H2</button>
+    <button>“ ”</button><button>• List</button><button>/ Slash</button>
+    <span class="sep"></span>
+    <span class="share">
+      <span style="opacity:.7">Sharing:</span>
+      <span class="pill sel">Private</span>
+      <span class="pill">Specific</span>
+      <span class="pill">Public</span>
+    </span>
+  </div>
+
+  <div class="book">
+    <div class="pages">
+      <div class="spine"></div>
+      <div class="turn prev">‹</div>
+      <div class="turn next">›</div>
+
+      <div class="page left">
+        <div class="doc">
+          <h1>The Travelogue</h1>
+          <p>Day one in the valley. The road from the harbor smelled of salt and pine, and the
+             librarian — a sleepy cat named Mallory — pressed this empty book into my hands.</p>
+          <h2>Things I saw</h2>
+          <ul>
+            <li>A waterwheel that hums in C</li>
+            <li>The night market beneath the bridge</li>
+          </ul>
+          <blockquote>“Write it down, or the valley forgets it for you.”</blockquote>
+        </div>
+        <div class="pageno">— iv —</div>
+      </div>
+
+      <div class="page right">
+        <div class="doc">
+          <h2>Tonight</h2>
+          <p>I traded three plums for a tallow candle and sat by the arched window to write.
+             The ink is the colour of wet bark.<span class="cursor"></span></p>
+          <p style="color:var(--ink-soft);font-style:italic">type <code>/</code> for headings, quotes, lists…</p>
+        </div>
+        <div class="pageno">— v —</div>
+
+        <div class="slash">
+          <div class="it hi">Heading 1 <span>#</span></div>
+          <div class="it">Heading 2 <span>##</span></div>
+          <div class="it">Quote <span>&gt;</span></div>
+          <div class="it">Bullet list <span>-</span></div>
+          <div class="it">Code <span>`</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="caption">MOCK 2 — The Open Book · aged paper, brass-bound oxblood cover. Real WYSIWYG markdown editing (toolbar + “/” slash menu); text size from markdown headings. Sharing toggles in the toolbar. Arrows turn pages; <b>Esc</b> walks back into the library.</div>
+</div>
+</body>
+</html>
