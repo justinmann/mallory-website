@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-21T23:21:10.912Z",
+  "generatedAt": "2026-06-21T23:41:09.838Z",
   "source": "shared/collections.ts",
   "collections": {
     "perfLog": {
@@ -254,6 +254,99 @@
         "trackable": false,
         "public": false,
         "cascadeFrom": null
+      }
+    },
+    "book": {
+      "name": "book",
+      "schema": {
+        "fields": {
+          "coverStyle": {
+            "type": "enum",
+            "values": [
+              "oxblood",
+              "forest",
+              "plain"
+            ],
+            "required": true,
+            "default": "oxblood"
+          },
+          "lecternPos": {
+            "type": "object",
+            "fields": {
+              "x": {
+                "type": "number",
+                "required": true
+              },
+              "y": {
+                "type": "number",
+                "required": true
+              }
+            },
+            "required": true,
+            "default": {
+              "x": 0,
+              "y": 0
+            }
+          },
+          "ownerId": {
+            "type": "string",
+            "required": true
+          },
+          "pages": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "required": true
+            },
+            "required": true,
+            "default": [
+              ""
+            ]
+          },
+          "sharing": {
+            "type": "object",
+            "fields": {
+              "sharedWith": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "required": true
+                },
+                "required": true,
+                "default": []
+              },
+              "visibility": {
+                "type": "enum",
+                "values": [
+                  "private",
+                  "specific",
+                  "public"
+                ],
+                "required": true,
+                "default": "private"
+              }
+            },
+            "required": true,
+            "default": {
+              "visibility": "private",
+              "sharedWith": []
+            }
+          },
+          "title": {
+            "type": "string",
+            "required": true,
+            "default": "Untitled Volume"
+          }
+        }
+      },
+      "meta": {
+        "cache": false,
+        "trackable": true,
+        "public": false,
+        "cascadeFrom": null,
+        "trackKeys": [
+          "ownerId"
+        ]
       }
     }
   }
