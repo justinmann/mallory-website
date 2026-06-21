@@ -50,8 +50,11 @@ pnpm run dev      # start the app
 ```
 
 When it finishes starting, open the URL it prints (usually
-`http://localhost:5173`) in your browser. You should see the library. Walk
-around with the **arrow keys** or **WASD**.
+`http://localhost:4321`) in your browser — or run `npx ugly-app url` to print
+it. You should see the library. Walk around with the **arrow keys** or **WASD**.
+
+> If port 4321 is already in use (e.g. you run other ugly-app projects), start
+> on another port: `PORT=4933 pnpm run dev`.
 
 To stop the app, press `Ctrl + C` in the terminal.
 
