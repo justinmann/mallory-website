@@ -1,6 +1,61 @@
-import { authReq, defineMessages, defineRequests, frameworkMessages, frameworkRequests, z } from 'ugly-app/shared';
+import { authReq, req, defineMessages, defineRequests, frameworkMessages, frameworkRequests, z } from 'ugly-app/shared';
+
+// ─── Book shapes ──────────────────────────────────────────────────────────────
+// The full persisted book (what the server returns), and the patch shape used to
+// update one. Kept here so every book endpoint stays in sync.
+const BookDoc = z.object({
+  _id: z.string(),
+  ownerId: z.string(),
+  title: z.string(),
+  coverStyle: z.enum(['oxblood', 'forest', 'plain']),
+  pages: z.array(z.string()),
+  lecternPos: z.object({ x: z.number(), y: z.number() }),
+  sharing: z.object({
+    visibility: z.enum(['private', 'specific', 'public']),
+    sharedWith: z.array(z.string()),
+  }),
+  created: z.number(),
+  updated: z.number(),
+});
+const BookPatch = z.object({
+  title: z.string().max(200).optional(),
+  coverStyle: z.enum(['oxblood', 'forest', 'plain']).optional(),
+  pages: z.array(z.string().max(50_000)).max(500).optional(),
+  lecternPos: z.object({ x: z.number(), y: z.number() }).optional(),
+  sharing: z.object({
+    visibility: z.enum(['private', 'specific', 'public']),
+    sharedWith: z.array(z.string()).max(200),
+  }).optional(),
+});
 
 export const requests = defineRequests({
+  // ─── Books ──────────────────────────────────────────────────────────────────
+  listMyBooks: authReq({
+    input: z.object({}),
+    output: z.object({ books: z.array(BookDoc) }),
+  }),
+  getBook: req({
+    input: z.object({ bookId: z.string() }),
+    output: z.object({ book: BookDoc.nullable() }),
+  }),
+  createBook: authReq({
+    input: z.object({
+      title: z.string().max(200).optional(),
+      coverStyle: z.enum(['oxblood', 'forest', 'plain']).optional(),
+    }),
+    output: z.object({ id: z.string() }),
+    rateLimit: { max: 30, window: 60 },
+  }),
+  updateBook: authReq({
+    input: z.object({ bookId: z.string(), patch: BookPatch }),
+    output: z.object({ ok: z.boolean() }),
+    rateLimit: { max: 120, window: 60 },
+  }),
+  deleteBook: authReq({
+    input: z.object({ bookId: z.string() }),
+    output: z.object({ ok: z.boolean() }),
+  }),
+
   // Todo demo — CRUD requests
   createTodo: authReq({
     input: z.object({ text: z.string().min(1).max(500) }),
