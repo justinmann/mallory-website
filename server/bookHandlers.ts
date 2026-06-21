@@ -1,5 +1,8 @@
 import { nanoid } from 'nanoid';
-import { createTypedDB } from 'ugly-app/server';
+// Import from the worker-safe adapter entry (not 'ugly-app/server', whose Node
+// deps would break the Cloudflare Workers bundle). This module is shared by
+// both server/index.ts (Node) and server/workers.ts (Workers).
+import { createTypedDB } from 'ugly-app/server/adapter/workers';
 import { dbDefaults } from 'ugly-app/shared';
 import type { RequestHandlers } from 'ugly-app';
 import { collections, type Book } from '../shared/collections';
