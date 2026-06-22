@@ -3,5 +3,25 @@
   "name": "mallory-website",
   "title": "Mallory's Library",
   "description": "A cozy dark-academia library you walk around and write books in.",
-  "domain": "listentothiscrazypersontalkaboutstuff.xyz"
+  "domain": "listentothiscrazypersontalkaboutstuff.xyz",
+  "deployTarget": {
+    "provider": "cloudflare-workers",
+    "workerName": "mallory-website",
+    "workerUrl": "https://mallory-website.justin-mann.workers.dev",
+    "cloudflareSubdomain": "justin-mann",
+    "neonProjectId": "ancient-cherry-62754499",
+    "cloudflareAccountId": "9edc7fbe4a55b0b6489df8e7a120526c",
+    "r2BucketName": "mallory-website",
+    "appDomain": "listentothiscrazypersontalkaboutstuff.xyz",
+    "appDomainZoneId": "406b6b7cf9297f338172bc9b63beb5f0",
+    "customDomainUrl": "https://listentothiscrazypersontalkaboutstuff.xyz",
+    "sendingDomain": "listentothiscrazypersontalkaboutstuff.xyz",
+    "proxyTokenIds": {
+      "ai": "",
+      "email": "",
+      "push": "",
+      "search": ""
+    },
+    "lastDeployedAt": "2026-06-22T01:06:51.715Z"
+  }
 }
