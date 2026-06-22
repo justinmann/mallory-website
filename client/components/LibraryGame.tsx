@@ -18,19 +18,45 @@ function toGameBook(b: LibBook): GameBook {
   return { id: b._id, title: b.title, coverStyle: b.coverStyle, pos: b.lecternPos };
 }
 
+// Starter content for a brand-new visitor's first book.
+const WELCOME_MD =
+  '# Welcome to Mallory’s Library\n\n' +
+  'Walk around with **WASD** or the **arrow keys** (or the joystick on a phone).\n\n' +
+  'Stroll up to a lectern and press **E** to open its book and write in it.\n\n' +
+  'Tap **+ New Volume** (top-right) to add a book of your own. Drag a lectern to move it.';
+
 export default function LibraryGame(): React.ReactElement {
   const { socket } = useApp();
   const router = useRouter();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const controllerRef = useRef<GameController | null>(null);
   const joystickRef = useRef<Vec2>({ x: 0, y: 0 });
+  const seededRef = useRef(false);
   const [books, setBooks] = useState<LibBook[]>([]);
+  // Only show the on-screen joystick + action button on touch devices.
+  const [isTouch] = useState(
+    () => typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0),
+  );
 
-  // Load the user's books once.
+  // Load the user's books; seed a welcome book on first visit so the room isn't empty.
   useEffect(() => {
-    void socket
-      .request('listMyBooks', {})
-      .then((r) => setBooks((r as { books: LibBook[] }).books));
+    let cancelled = false;
+    async function load(): Promise<void> {
+      let list = ((await socket.request('listMyBooks', {})) as { books: LibBook[] }).books;
+      if (list.length === 0 && !seededRef.current) {
+        seededRef.current = true;
+        const { id } = (await socket.request('createBook', {
+          title: 'Welcome to Mallory’s Library',
+        })) as { id: string };
+        await socket.request('updateBook', { bookId: id, patch: { pages: [WELCOME_MD] } });
+        list = ((await socket.request('listMyBooks', {})) as { books: LibBook[] }).books;
+      }
+      if (!cancelled) setBooks(list);
+    }
+    void load();
+    return () => {
+      cancelled = true;
+    };
   }, [socket]);
 
   // Boot the game once, on mount; tear it down on unmount.
@@ -88,12 +114,14 @@ export default function LibraryGame(): React.ReactElement {
       >
         + New Volume
       </button>
-      <TouchJoystick
-        onVector={(v) => {
-          joystickRef.current = v;
-        }}
-        onAction={() => controllerRef.current?.pressAction()}
-      />
+      {isTouch && (
+        <TouchJoystick
+          onVector={(v) => {
+            joystickRef.current = v;
+          }}
+          onAction={() => controllerRef.current?.pressAction()}
+        />
+      )}
     </div>
   );
 }
