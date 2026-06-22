@@ -1,0 +1,6 @@
+# Godot editor import cache — regenerated locally, never commit.
+.godot/
+.DS_Store
+
+# NOTE: export_presets.cfg IS committed on purpose — it holds the "Web" preset
+# (single-threaded) that `npm run build:game` relies on. It contains no secrets.

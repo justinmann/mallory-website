@@ -1,9 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useApp } from 'ugly-app/client';
 import { useRouter } from '../router';
-import { createGame, type GameController } from '../game/createGame';
-import type { GameBook, Vec2 } from '../game/types';
-import { TouchJoystick } from './TouchJoystick';
+import { buildId } from '../../shared/Build';
 
 // Just the fields the library needs from each book (the API also returns
 // ownerId/pages/sharing, which we ignore here).
@@ -14,9 +12,21 @@ interface LibBook {
   lecternPos: { x: number; y: number };
 }
 
-function toGameBook(b: LibBook): GameBook {
+interface WireBook {
+  id: string;
+  title: string;
+  coverStyle: 'oxblood' | 'forest' | 'plain';
+  pos: { x: number; y: number };
+}
+
+function toWireBook(b: LibBook): WireBook {
   return { id: b._id, title: b.title, coverStyle: b.coverStyle, pos: b.lecternPos };
 }
+
+// The Godot game (HTML5 export) lives in client/public/game/. In dev Vite serves
+// it at /game/...; in production the framework only serves built assets under
+// /{buildId}/..., so the iframe src must be buildId-prefixed there.
+const GAME_SRC = import.meta.env.PROD ? `/${buildId}/game/index.html` : '/game/index.html';
 
 // Starter content for a brand-new visitor's first book.
 const WELCOME_MD =
@@ -28,15 +38,19 @@ const WELCOME_MD =
 export default function LibraryGame(): React.ReactElement {
   const { socket } = useApp();
   const router = useRouter();
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const controllerRef = useRef<GameController | null>(null);
-  const joystickRef = useRef<Vec2>({ x: 0, y: 0 });
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const readyRef = useRef(false);
+  const booksRef = useRef<LibBook[]>([]);
   const seededRef = useRef(false);
   const [books, setBooks] = useState<LibBook[]>([]);
-  // Only show the on-screen joystick + action button on touch devices.
-  const [isTouch] = useState(
-    () => typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0),
-  );
+  const [loaded, setLoaded] = useState(false);
+
+  // Push the current book list into the Godot game (only once it's ready).
+  function sendBooks(list: LibBook[]): void {
+    const win = iframeRef.current?.contentWindow;
+    if (!win || !readyRef.current) return;
+    win.postMessage({ type: 'mallory:setBooks', books: list.map(toWireBook) }, '*');
+  }
 
   // Load the user's books; seed a welcome book on first visit so the room isn't empty.
   useEffect(() => {
@@ -51,7 +65,10 @@ export default function LibraryGame(): React.ReactElement {
         await socket.request('updateBook', { bookId: id, patch: { pages: [WELCOME_MD] } });
         list = ((await socket.request('listMyBooks', {})) as { books: LibBook[] }).books;
       }
-      if (!cancelled) setBooks(list);
+      if (!cancelled) {
+        booksRef.current = list;
+        setBooks(list);
+      }
     }
     void load();
     return () => {
@@ -59,32 +76,37 @@ export default function LibraryGame(): React.ReactElement {
     };
   }, [socket]);
 
-  // Boot the game once, on mount; tear it down on unmount.
+  // Listen for messages coming FROM the Godot game.
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    controllerRef.current = createGame({
-      canvas,
-      books: books.map(toGameBook),
-      getJoystick: () => joystickRef.current,
-      events: {
-        onOpenBook: (id) => router.push('book/:bookId', { bookId: id }),
-        onLecternMoved: (id, pos) => {
-          void socket.request('updateBook', { bookId: id, patch: { lecternPos: pos } });
-        },
-      },
-    });
-    return () => {
-      controllerRef.current?.destroy();
-      controllerRef.current = null;
-    };
-    // Boot once; book updates are pushed in via the effect below.
+    function onMessage(e: MessageEvent): void {
+      if (e.source !== iframeRef.current?.contentWindow) return;
+      const data = e.data as { type?: string; id?: string; pos?: { x: number; y: number } };
+      switch (data.type) {
+        case 'mallory:ready':
+          readyRef.current = true;
+          sendBooks(booksRef.current); // drain the current list on handshake
+          break;
+        case 'mallory:openBook':
+          if (data.id) router.push('book/:bookId', { bookId: data.id });
+          break;
+        case 'mallory:lecternMoved':
+          if (data.id && data.pos) {
+            void socket.request('updateBook', { bookId: data.id, patch: { lecternPos: data.pos } });
+          }
+          break;
+      }
+    }
+    window.addEventListener('message', onMessage);
+    return () => window.removeEventListener('message', onMessage);
+    // socket/router are stable; sendBooks reads refs.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Push book-list changes into the running game.
+  // Whenever the book list changes, push it into the game (no-ops until ready).
   useEffect(() => {
-    controllerRef.current?.setBooks(books.map(toGameBook));
+    booksRef.current = books;
+    sendBooks(books);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [books]);
 
   async function handleNewBook(): Promise<void> {
@@ -95,7 +117,39 @@ export default function LibraryGame(): React.ReactElement {
 
   return (
     <div style={{ position: 'relative', width: '100vw', height: '100vh', overflow: 'hidden', background: '#0a0706' }}>
-      <canvas ref={canvasRef} style={{ width: '100%', height: '100%', display: 'block' }} />
+      <iframe
+        ref={iframeRef}
+        src={GAME_SRC}
+        title="Mallory's Library"
+        allow="autoplay; fullscreen; gamepad"
+        // allow-same-origin so the game can fetch its own .wasm/.pck; allow-scripts to run WASM.
+        sandbox="allow-scripts allow-same-origin allow-pointer-lock"
+        style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
+        onLoad={() => {
+          setLoaded(true);
+          iframeRef.current?.focus(); // the iframe must hold focus for WASD/E
+        }}
+      />
+
+      {!loaded && (
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#9a8a64',
+            fontFamily: 'serif',
+            fontSize: 18,
+            background: 'radial-gradient(120% 90% at 50% 40%,#1a120c,#070504)',
+            pointerEvents: 'none',
+          }}
+        >
+          Lighting the candles…
+        </div>
+      )}
+
       <button
         onClick={() => void handleNewBook()}
         style={{
@@ -114,14 +168,6 @@ export default function LibraryGame(): React.ReactElement {
       >
         + New Volume
       </button>
-      {isTouch && (
-        <TouchJoystick
-          onVector={(v) => {
-            joystickRef.current = v;
-          }}
-          onAction={() => controllerRef.current?.pressAction()}
-        />
-      )}
     </div>
   );
 }

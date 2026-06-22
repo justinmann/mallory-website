@@ -1,0 +1,29 @@
+; Godot 4 project for Mallory's Library — the walkable room.
+; Open this folder in the Godot editor to author the game.
+; Export to web with:  npm run build:game   (see package.json)
+
+config_version=5
+
+[application]
+
+config/name="Mallory's Library"
+run/main_scene="res://Main.tscn"
+config/features=PackedStringArray("4.6", "GL Compatibility")
+
+[autoload]
+
+; The ONLY script that talks to the surrounding web page (React).
+Bridge="*res://scripts/bridge.gd"
+
+[display]
+
+window/size/viewport_width=960
+window/size/viewport_height=540
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+
+[rendering]
+
+; GL Compatibility is the most reliable renderer for web export.
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"

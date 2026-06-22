@@ -2,10 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { pages } from '../../shared/pages';
 
 describe('Page definitions', () => {
-  it('home page exists and is public', () => {
+  it('home page is the library and requires auth', () => {
+    // Home ('') IS Mallory's Library — your own library, so it's auth-gated.
     const home = pages[''];
     expect(home).toBeDefined();
-    expect(home.auth).toBe(false);
+    expect(home.auth).toBe(true);
   });
 
   it('auth-demo page exists and is public', () => {
