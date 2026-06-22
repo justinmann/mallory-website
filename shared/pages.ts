@@ -13,8 +13,9 @@ import { definePage, definePages } from 'ugly-app/shared';
 // After adding a page here, map it to a component in client/allPages.ts.
 // Navigate to it from anywhere via: useRouter().push('route-key', params)
 export const pages = definePages({
-  '': definePage<{}>({ auth: false }),
-  // Mallory's Library — the walkable game (requires login: it's your own library)
+  // Home IS the library — the walkable game (requires login: it's your own library)
+  '': definePage<{}>({ auth: true }),
+  // Alias kept so /library still works (links, e2e, README).
   'library': definePage<{}>({ auth: true }),
   // A single open book. Public/shared books render for anyone, so auth is false;
   // read access is enforced server-side in the getBook handler.

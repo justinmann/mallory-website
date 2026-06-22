@@ -14,7 +14,7 @@ import type { AppPages } from '../shared/pages';
 //
 // When you add a route in shared/pages.ts, add the matching entry here.
 export const allPages = {
-  ['']: lazyPage(() => import('./pages/HomePage')),
+  ['']: lazyPage(() => import('./pages/LibraryPage')),
   ['library']: lazyPage(() => import('./pages/LibraryPage')),
   ['book/:bookId']: lazyPage(() => import('./pages/BookPage')),
   ['auth-demo']: lazyPage(() => import('./pages/AuthDemoPage')),
