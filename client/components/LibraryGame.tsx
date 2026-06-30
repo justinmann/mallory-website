@@ -154,8 +154,8 @@ export default function LibraryGame(): React.ReactElement {
         onClick={() => void handleNewBook()}
         style={{
           position: 'absolute',
-          top: 16,
-          right: 16,
+          top: 'calc(16px + env(safe-area-inset-top, 0px))',
+          right: 'calc(16px + env(safe-area-inset-right, 0px))',
           zIndex: 5,
           fontFamily: 'monospace',
           background: '#1c130c',
