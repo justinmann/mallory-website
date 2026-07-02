@@ -77,7 +77,7 @@ export default function PushTestPage(): React.ReactElement {
         targetUserId: targetUserId.trim(),
         title: title.trim(),
         body: body.trim(),
-        path: '',
+        page: '',
       })) as { sent: boolean; devices?: number; delivered?: number; failed?: number; errors?: string[] };
       // Show the full delivery breakdown so the send is self-verifying — no
       // log-tailing needed to see device count / per-device outcome.
