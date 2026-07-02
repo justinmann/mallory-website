@@ -1,4 +1,4 @@
-import { bootstrapApp, FeedbackButton } from 'ugly-app/client';
+import { bootstrapApp } from 'ugly-app/client';
 import { requests } from '../shared/api';
 import en from '../shared/lang/en';
 import { stringsDef } from '../shared/strings';
@@ -8,12 +8,7 @@ import './styles.css';
 bootstrapApp({
   requests,
   RouterProvider,
-  render: () => (
-    <>
-      <RouterView />
-      <FeedbackButton />
-    </>
-  ),
+  render: () => <RouterView />,
   strings: {
     defaultLang: stringsDef.defaultLang,
     langs: stringsDef.langs,
