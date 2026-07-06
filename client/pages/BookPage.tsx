@@ -28,9 +28,9 @@ export default function BookPage({ bookId }: { bookId: string }): React.ReactEle
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const onResize = (): void => setVw(window.innerWidth);
+    const onResize = (): void => { setVw(window.innerWidth); };
     window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
+    return () => { window.removeEventListener('resize', onResize); };
   }, []);
 
   useEffect(() => {
@@ -55,7 +55,7 @@ export default function BookPage({ bookId }: { bookId: string }): React.ReactEle
     return (
       <div style={{ color: '#d8c8a0', padding: 24, fontFamily: 'serif' }}>
         This volume is sealed (private, or it doesn’t exist).{' '}
-        <button onClick={() => router.push('library', {})}>← Library</button>
+        <button onClick={() => { router.push('library', {}); }}>← Library</button>
       </div>
     );
   }
@@ -87,7 +87,7 @@ export default function BookPage({ bookId }: { bookId: string }): React.ReactEle
         value={pages[idx] ?? ''}
         disabled={!isOwner}
         placeholder={isOwner ? 'Write…  (type # for a big heading)' : ''}
-        onValueChanged={(md) => setPage(idx, md)}
+        onValueChanged={(md) => { setPage(idx, md); }}
         menuAbove
         limitedToolbar
         width={colWidth}
@@ -116,7 +116,7 @@ export default function BookPage({ bookId }: { bookId: string }): React.ReactEle
         }}
       >
         <button
-          onClick={() => router.push('library', {})}
+          onClick={() => { router.push('library', {}); }}
           style={btn('#e8b84b', '#c9a24b')}
         >
           ← Library
@@ -143,7 +143,7 @@ export default function BookPage({ bookId }: { bookId: string }): React.ReactEle
             <button
               onClick={() => {
                 if (confirm('Delete this volume?')) {
-                  void socket.request('deleteBook', { bookId }).then(() => router.push('library', {}));
+                  void socket.request('deleteBook', { bookId }).then(() => { router.push('library', {}); });
                 }
               }}
               style={btn('#8a3a3a', '#5e2b2b')}
@@ -158,8 +158,8 @@ export default function BookPage({ bookId }: { bookId: string }): React.ReactEle
         left={renderPage(pageIndex)}
         right={renderPage(pageIndex + 1)}
         pageLabel={`— ${pageIndex + 1}${isNarrow ? '' : `–${lastShown}`} of ${pages.length} —`}
-        onPrev={() => setPageIndex((i) => Math.max(0, i - step))}
-        onNext={() => setPageIndex((i) => (i + step < pages.length ? i + step : i))}
+        onPrev={() => { setPageIndex((i) => Math.max(0, i - step)); }}
+        onNext={() => { setPageIndex((i) => (i + step < pages.length ? i + step : i)); }}
       />
     </>
   );

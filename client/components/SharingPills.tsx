@@ -19,7 +19,7 @@ export function SharingPills({
   const pill = (v: Sharing['visibility'], label: string): React.ReactElement => (
     <button
       key={v}
-      onClick={() => onChange({ ...value, visibility: v })}
+      onClick={() => { onChange({ ...value, visibility: v }); }}
       style={{
         borderRadius: 20,
         padding: '4px 10px',
@@ -44,7 +44,7 @@ export function SharingPills({
         <span style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
           <input
             value={draft}
-            onChange={(e) => setDraft(e.target.value)}
+            onChange={(e) => { setDraft(e.target.value); }}
             placeholder="user id"
             style={{ fontFamily: 'monospace', fontSize: 12, width: 90 }}
           />

@@ -97,7 +97,7 @@ export default function LibraryGame(): React.ReactElement {
       }
     }
     window.addEventListener('message', onMessage);
-    return () => window.removeEventListener('message', onMessage);
+    return () => { window.removeEventListener('message', onMessage); };
     // socket/router are stable; sendBooks reads refs.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
