@@ -164,7 +164,7 @@ export default function LibraryGame(): React.ReactElement {
           borderRadius: 8,
           padding: '8px 12px',
           cursor: 'pointer',
-        }}
+        }} data-id="new-volume"
       >
         + New Volume
       </button>

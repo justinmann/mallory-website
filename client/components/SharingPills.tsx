@@ -29,7 +29,7 @@ export function SharingPills({
         color: value.visibility === v ? '#fff' : '#d8c8a0',
         fontFamily: 'monospace',
         fontSize: 12,
-      }}
+      }} data-id="button"
     >
       {label}
     </button>
@@ -46,7 +46,7 @@ export function SharingPills({
             value={draft}
             onChange={(e) => { setDraft(e.target.value); }}
             placeholder="user id"
-            style={{ fontFamily: 'monospace', fontSize: 12, width: 90 }}
+            style={{ fontFamily: 'monospace', fontSize: 12, width: 90 }} data-id="user-id"
           />
           <button
             onClick={() => {
@@ -55,7 +55,7 @@ export function SharingPills({
                 onChange({ ...value, sharedWith: [...value.sharedWith, id] });
               }
               setDraft('');
-            }}
+            }} data-id="add"
           >
             add
           </button>

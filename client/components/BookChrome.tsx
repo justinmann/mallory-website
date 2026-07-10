@@ -60,10 +60,10 @@ export function BookChrome({
             </div>
           )}
         </div>
-        <button onClick={onPrev} style={arrow('left')}>
+        <button onClick={onPrev} style={arrow('left')} data-id="button">
           ‹
         </button>
-        <button onClick={onNext} style={arrow('right')}>
+        <button onClick={onNext} style={arrow('right')} data-id="button-2">
           ›
         </button>
       </div>

@@ -240,7 +240,7 @@ export default function ThreeTestPage(): React.ReactElement {
     <PageLayout
       header={
         <div>
-          <a href="/test">← Tests</a>
+          <a href="/test" data-id="tests">← Tests</a>
         </div>
       }
     >

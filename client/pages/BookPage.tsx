@@ -55,7 +55,7 @@ export default function BookPage({ bookId }: { bookId: string }): React.ReactEle
     return (
       <div style={{ color: '#d8c8a0', padding: 24, fontFamily: 'serif' }}>
         This volume is sealed (private, or it doesn’t exist).{' '}
-        <button onClick={() => { router.push('library', {}); }}>← Library</button>
+        <button onClick={() => { router.push('library', {}); }} data-id="library">← Library</button>
       </div>
     );
   }
@@ -117,7 +117,7 @@ export default function BookPage({ bookId }: { bookId: string }): React.ReactEle
       >
         <button
           onClick={() => { router.push('library', {}); }}
-          style={btn('#e8b84b', '#c9a24b')}
+          style={btn('#e8b84b', '#c9a24b')} data-id="library-2"
         >
           ← Library
         </button>
@@ -136,7 +136,7 @@ export default function BookPage({ bookId }: { bookId: string }): React.ReactEle
                 setBook({ ...book, pages: next });
                 scheduleSave({ pages: next });
               }}
-              style={btn('#e8b84b', '#c9a24b')}
+              style={btn('#e8b84b', '#c9a24b')} data-id="page"
             >
               + Page
             </button>
@@ -146,7 +146,7 @@ export default function BookPage({ bookId }: { bookId: string }): React.ReactEle
                   void socket.request('deleteBook', { bookId }).then(() => { router.push('library', {}); });
                 }
               }}
-              style={btn('#8a3a3a', '#5e2b2b')}
+              style={btn('#8a3a3a', '#5e2b2b')} data-id="delete"
             >
               Delete
             </button>
