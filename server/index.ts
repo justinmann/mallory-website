@@ -1,6 +1,5 @@
 import {
   createApp,
-  pgQuery,
   emailSend,
   flushPerf,
   recordFeedback,
@@ -27,16 +26,7 @@ import es from '../shared/lang/es';
 import { pages } from '../shared/pages';
 import { stringsDef } from '../shared/strings';
 
-const cronHandlers: WorkerHandlers<typeof cronTasks> = {
-  dailyCleanup: async () => {
-    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    const result = await pgQuery(
-      `DELETE FROM docs_todo WHERE (data->>'done')::boolean = true AND (data->'updated')::bigint < $1`,
-      [thirtyDaysAgo.getTime()],
-    );
-    console.log(`[Cron] dailyCleanup: deleted ${result.rowCount} old completed todos`);
-  },
-};
+const cronHandlers: WorkerHandlers<typeof cronTasks> = {};
 
 const app = createApp(
   { requests, messages },

@@ -36,12 +36,7 @@ const requestHandlers: Partial<RequestHandlers<typeof requests>> = {
 
 // Cron handlers run on Cloudflare Cron Triggers (matches the schedule
 // declared in `shared/cron.ts`).
-const cronHandlers: WorkerHandlers<typeof cronTasks> = {
-  // eslint-disable-next-line @typescript-eslint/require-await
-  dailyCleanup: async () => {
-    // Implement in your Worker: e.g. prune old rows via Hyperdrive or D1.
-  },
-};
+const cronHandlers: WorkerHandlers<typeof cronTasks> = {};
 
 const app = createWorkersApp(
   { requests, messages },

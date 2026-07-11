@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import type { InferDocType } from 'ugly-app/shared';
-import { defineCollections } from 'ugly-app/shared';
+import { defineCollections, d1 } from 'ugly-app/shared';
 
 // ─── Schemas & Types ─────────────────────────────────────────────────────────
 
@@ -57,26 +57,52 @@ export type Book = InferDocType<typeof BookSchema>;
 //                  socket.trackDocs(collections.message, { keys: { chatId: '...' } }, cb)
 //
 // After adding a collection, run: npm run db:schema-gen && npm run db:migrate
+//
+// ─── D1-migration index lists ────────────────────────────────────────────────
+// D1 (`db: d1`) THROWS UnindexedQueryError on any *filter* field, and any *sort*
+// field that is not a top-level column (_id/created/updated/version), unless it
+// is covered by a declared index. trackKeys do NOT exempt a field: any collection
+// whose trackKey is used in a `socket.trackDocs({ keys: { … } })` subscription is
+// re-queried server-side via getDocs({ <key> }) and so the key must be indexed.
+// Declare indexes as widened `IndexDef[]`-typed module consts (NOT inline tuples)
+// so `defineCollections` stays under TypeScript's mapped-type inference budget.
+const todoIndexes: { fields: Record<string, 1 | -1> }[] = [
+  // trackDocs('todo', { keys: { userId } }) → getDocs({ userId }) (TodoDemoPage).
+  { fields: { userId: 1 } },
+];
+const messageIndexes: { fields: Record<string, 1 | -1> }[] = [
+  // Conversation engine: getDocs(message, { conversationId }, sort{created:-1})
+  // and deleteQuery(message, { conversationId }). `created` sort is a top-level
+  // column — exempt. Only conversationId needs an index.
+  { fields: { conversationId: 1 } },
+];
+const bookIndexes: { fields: Record<string, 1 | -1> }[] = [
+  // listMyBooks: getDocs(book, { ownerId }).
+  { fields: { ownerId: 1 } },
+];
 export const collections = defineCollections({
   todo: {
     schema: TodoSchema,
-    meta: { cache: false, trackable: true, public: false, cascadeFrom: null, trackKeys: ['userId'] },
+    meta: { cache: false, trackable: true, public: false, cascadeFrom: null, trackKeys: ['userId'], db: d1 },
+    indexes: todoIndexes,
   },
   conversation: {
     schema: ConversationSchema,
-    meta: { cache: false, trackable: false, public: false, cascadeFrom: null },
+    meta: { cache: false, trackable: false, public: false, cascadeFrom: null, db: d1 },
   },
   message: {
     schema: MessageSchema,
-    meta: { cache: false, trackable: false, public: false, cascadeFrom: 'conversation', trackKeys: ['conversationId'] },
+    meta: { cache: false, trackable: false, public: false, cascadeFrom: 'conversation', trackKeys: ['conversationId'], db: d1 },
+    indexes: messageIndexes,
   },
   collabDoc: {
     schema: CollabDocSchema,
-    meta: { cache: false, trackable: false, public: false, cascadeFrom: null },
+    meta: { cache: false, trackable: false, public: false, cascadeFrom: null, db: d1 },
   },
   book: {
     schema: BookSchema,
-    meta: { cache: false, trackable: true, public: false, cascadeFrom: null, trackKeys: ['ownerId'] },
+    meta: { cache: false, trackable: true, public: false, cascadeFrom: null, trackKeys: ['ownerId'], db: d1 },
+    indexes: bookIndexes,
   },
 });
 
