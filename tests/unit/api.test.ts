@@ -23,7 +23,10 @@ describe('API requests', () => {
 
   it('captureEvent accepts a valid event', () => {
     const schema = frameworkRequests.captureEvent.inputSchema!;
-    const result = schema.safeParse({ eventName: 'CTA_CLICK', sessionId: 'abc123' });
+    const result = schema.safeParse({
+      eventName: 'CTA_CLICK',
+      sessionId: 'abc123',
+    });
     expect(result.success).toBe(true);
   });
 });

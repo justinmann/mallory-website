@@ -6,7 +6,9 @@ test.describe('App startup', () => {
     await expect(page.getByText('Welcome')).toBeVisible();
   });
 
-  test('home page shows login button when unauthenticated', async ({ page }) => {
+  test('home page shows login button when unauthenticated', async ({
+    page,
+  }) => {
     await page.goto('/');
     await expect(page.getByText('Login')).toBeVisible();
   });
@@ -20,7 +22,9 @@ test.describe('App startup', () => {
 });
 
 test.describe('Auth flow', () => {
-  test('auth-demo page shows login prompt when unauthenticated', async ({ page }) => {
+  test('auth-demo page shows login prompt when unauthenticated', async ({
+    page,
+  }) => {
     await page.goto('/auth-demo');
     await expect(page.getByText('You are not logged in.')).toBeVisible();
     await expect(page.getByText('Login with ugly.bot')).toBeVisible();

@@ -6,7 +6,9 @@ import { expect, test } from '@playwright/test';
 // database, so this spec needs a logged-in session AND a configured local DB
 // (same as the repo's other authed e2e specs). Run with the dev DB up:
 //   PORT=4933 pnpm run test:e2e tests/e2e/library.spec.ts
-test('library mounts a canvas and exposes the new-volume control', async ({ page }) => {
+test('library mounts a canvas and exposes the new-volume control', async ({
+  page,
+}) => {
   await page.goto('/library');
   // The Kaplay game renders into a <canvas>.
   await expect(page.locator('canvas')).toBeVisible();

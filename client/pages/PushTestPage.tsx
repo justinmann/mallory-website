@@ -42,7 +42,10 @@ export default function PushTestPage(): React.ReactElement {
         result.registered ? 'ok' : 'info',
       );
     } catch (err) {
-      addLog(`Init failed in ${fmt(Date.now() - started)}: ${err instanceof Error ? err.message : String(err)}`, 'err');
+      addLog(
+        `Init failed in ${fmt(Date.now() - started)}: ${err instanceof Error ? err.message : String(err)}`,
+        'err',
+      );
     } finally {
       setLoading(false);
     }
@@ -58,10 +61,16 @@ export default function PushTestPage(): React.ReactElement {
         setRegistered(true);
         addLog(`Push registered in ${fmt(Date.now() - started)}`, 'ok');
       } else {
-        addLog(`Registration failed in ${fmt(Date.now() - started)}: ${result.error ?? 'unknown'}`, 'err');
+        addLog(
+          `Registration failed in ${fmt(Date.now() - started)}: ${result.error ?? 'unknown'}`,
+          'err',
+        );
       }
     } catch (err) {
-      addLog(`Register failed in ${fmt(Date.now() - started)}: ${err instanceof Error ? err.message : String(err)}`, 'err');
+      addLog(
+        `Register failed in ${fmt(Date.now() - started)}: ${err instanceof Error ? err.message : String(err)}`,
+        'err',
+      );
     } finally {
       setLoading(false);
     }
@@ -78,7 +87,13 @@ export default function PushTestPage(): React.ReactElement {
         title: title.trim(),
         body: body.trim(),
         page: '',
-      })) as { sent: boolean; devices?: number; delivered?: number; failed?: number; errors?: string[] };
+      })) as {
+        sent: boolean;
+        devices?: number;
+        delivered?: number;
+        failed?: number;
+        errors?: string[];
+      };
       // Show the full delivery breakdown so the send is self-verifying — no
       // log-tailing needed to see device count / per-device outcome.
       const detail =
@@ -93,7 +108,10 @@ export default function PushTestPage(): React.ReactElement {
       );
       for (const e of result.errors ?? []) addLog(`device error: ${e}`, 'err');
     } catch (err) {
-      addLog(`Send failed in ${fmt(Date.now() - started)}: ${err instanceof Error ? err.message : String(err)}`, 'err');
+      addLog(
+        `Send failed in ${fmt(Date.now() - started)}: ${err instanceof Error ? err.message : String(err)}`,
+        'err',
+      );
     } finally {
       setLoading(false);
     }
@@ -103,7 +121,9 @@ export default function PushTestPage(): React.ReactElement {
     <PageLayout
       header={
         <div>
-          <a href="/test" data-id="tests">← Tests</a>
+          <a href="/test" data-id="tests">
+            ← Tests
+          </a>
         </div>
       }
     >
@@ -113,7 +133,12 @@ export default function PushTestPage(): React.ReactElement {
         <Card>
           <h2>1. Check Registration</h2>
           <p style={{ opacity: 0.7, marginBottom: 8 }}>
-            Status: {registered === null ? 'unknown' : registered ? 'registered' : 'not registered'}
+            Status:{' '}
+            {registered === null
+              ? 'unknown'
+              : registered
+                ? 'registered'
+                : 'not registered'}
           </p>
           <p style={{ opacity: 0.6, fontSize: '0.8em', marginBottom: 8 }}>
             Note: "granted" only means the OS prompt was answered — it does NOT
@@ -121,10 +146,22 @@ export default function PushTestPage(): React.ReactElement {
             FCM token.
           </p>
           <div style={{ display: 'flex', gap: 8 }}>
-            <Button onClick={() => { void handleInit(); }} disabled={loading} data-id="check-status">
+            <Button
+              onClick={() => {
+                void handleInit();
+              }}
+              disabled={loading}
+              data-id="check-status"
+            >
               Check Status
             </Button>
-            <Button onClick={() => { void handleRegister(); }} disabled={loading} data-id="register-for-push">
+            <Button
+              onClick={() => {
+                void handleRegister();
+              }}
+              disabled={loading}
+              data-id="register-for-push"
+            >
               Register for Push
             </Button>
           </div>
@@ -136,13 +173,22 @@ export default function PushTestPage(): React.ReactElement {
             label="Target User ID"
             value={targetUserId}
             onChange={setTargetUserId}
-            placeholder="user ID to send to" data-id="target-user-id"
+            placeholder="user ID to send to"
+            data-id="target-user-id"
           />
-          <Input label="Title" value={title} onChange={setTitle} data-id="title" />
+          <Input
+            label="Title"
+            value={title}
+            onChange={setTitle}
+            data-id="title"
+          />
           <Input label="Body" value={body} onChange={setBody} data-id="body" />
           <Button
-            onClick={() => { void handleSend(); }}
-            disabled={loading || !targetUserId.trim() || !title.trim()} data-id="button"
+            onClick={() => {
+              void handleSend();
+            }}
+            disabled={loading || !targetUserId.trim() || !title.trim()}
+            data-id="button"
           >
             {loading ? 'Sending...' : 'Send Push'}
           </Button>

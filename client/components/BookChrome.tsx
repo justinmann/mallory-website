@@ -51,11 +51,25 @@ export function BookChrome({
             overflow: 'hidden',
           }}
         >
-          <div style={{ padding: '24px 28px', overflow: 'auto', boxShadow: single ? undefined : 'inset -16px 0 26px -16px rgba(40,25,12,.7)' }}>
+          <div
+            style={{
+              padding: '24px 28px',
+              overflow: 'auto',
+              boxShadow: single
+                ? undefined
+                : 'inset -16px 0 26px -16px rgba(40,25,12,.7)',
+            }}
+          >
             {left}
           </div>
           {!single && (
-            <div style={{ padding: '24px 28px', overflow: 'auto', boxShadow: 'inset 16px 0 26px -16px rgba(40,25,12,.7)' }}>
+            <div
+              style={{
+                padding: '24px 28px',
+                overflow: 'auto',
+                boxShadow: 'inset 16px 0 26px -16px rgba(40,25,12,.7)',
+              }}
+            >
               {right}
             </div>
           )}
@@ -67,7 +81,9 @@ export function BookChrome({
           ›
         </button>
       </div>
-      <div style={{ fontFamily: 'monospace', color: '#9a8a64', fontSize: 12 }}>{pageLabel}</div>
+      <div style={{ fontFamily: 'monospace', color: '#9a8a64', fontSize: 12 }}>
+        {pageLabel}
+      </div>
     </div>
   );
 }

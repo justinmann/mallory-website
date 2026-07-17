@@ -36,7 +36,9 @@ export const BookSchema = z.object({
   title: z.string().default('Untitled Volume'),
   coverStyle: z.enum(['oxblood', 'forest', 'plain']).default('oxblood'),
   pages: z.array(z.string()).default(['']),
-  lecternPos: z.object({ x: z.number(), y: z.number() }).default({ x: 0, y: 0 }),
+  lecternPos: z
+    .object({ x: z.number(), y: z.number() })
+    .default({ x: 0, y: 0 }),
   sharing: z
     .object({
       visibility: z.enum(['private', 'specific', 'public']).default('private'),
@@ -83,25 +85,58 @@ const bookIndexes: { fields: Record<string, 1 | -1> }[] = [
 export const collections = defineCollections({
   todo: {
     schema: TodoSchema,
-    meta: { cache: false, trackable: true, public: false, cascadeFrom: null, trackKeys: ['userId'], db: d1 },
+    meta: {
+      cache: false,
+      trackable: true,
+      public: false,
+      cascadeFrom: null,
+      trackKeys: ['userId'],
+      db: d1,
+    },
     indexes: todoIndexes,
   },
   conversation: {
     schema: ConversationSchema,
-    meta: { cache: false, trackable: false, public: false, cascadeFrom: null, db: d1 },
+    meta: {
+      cache: false,
+      trackable: false,
+      public: false,
+      cascadeFrom: null,
+      db: d1,
+    },
   },
   message: {
     schema: MessageSchema,
-    meta: { cache: false, trackable: false, public: false, cascadeFrom: 'conversation', trackKeys: ['conversationId'], db: d1 },
+    meta: {
+      cache: false,
+      trackable: false,
+      public: false,
+      cascadeFrom: 'conversation',
+      trackKeys: ['conversationId'],
+      db: d1,
+    },
     indexes: messageIndexes,
   },
   collabDoc: {
     schema: CollabDocSchema,
-    meta: { cache: false, trackable: false, public: false, cascadeFrom: null, db: d1 },
+    meta: {
+      cache: false,
+      trackable: false,
+      public: false,
+      cascadeFrom: null,
+      db: d1,
+    },
   },
   book: {
     schema: BookSchema,
-    meta: { cache: false, trackable: true, public: false, cascadeFrom: null, trackKeys: ['ownerId'], db: d1 },
+    meta: {
+      cache: false,
+      trackable: true,
+      public: false,
+      cascadeFrom: null,
+      trackKeys: ['ownerId'],
+      db: d1,
+    },
     indexes: bookIndexes,
   },
 });

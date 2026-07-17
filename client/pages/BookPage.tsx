@@ -16,21 +16,33 @@ interface BookView {
   sharing: Sharing;
 }
 
-type BookPatch = Partial<Pick<BookView, 'title' | 'coverStyle' | 'pages' | 'sharing'>>;
+type BookPatch = Partial<
+  Pick<BookView, 'title' | 'coverStyle' | 'pages' | 'sharing'>
+>;
 
-export default function BookPage({ bookId }: { bookId: string }): React.ReactElement {
+export default function BookPage({
+  bookId,
+}: {
+  bookId: string;
+}): React.ReactElement {
   const { socket, userId } = useApp();
   const router = useRouter();
   const [book, setBook] = useState<BookView | null>(null);
   const [loaded, setLoaded] = useState(false);
   const [pageIndex, setPageIndex] = useState(0);
-  const [vw, setVw] = useState(() => (typeof window !== 'undefined' ? window.innerWidth : 900));
+  const [vw, setVw] = useState(() =>
+    typeof window !== 'undefined' ? window.innerWidth : 900,
+  );
   const saveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    const onResize = (): void => { setVw(window.innerWidth); };
+    const onResize = (): void => {
+      setVw(window.innerWidth);
+    };
     window.addEventListener('resize', onResize);
-    return () => { window.removeEventListener('resize', onResize); };
+    return () => {
+      window.removeEventListener('resize', onResize);
+    };
   }, []);
 
   useEffect(() => {
@@ -50,12 +62,20 @@ export default function BookPage({ bookId }: { bookId: string }): React.ReactEle
     [socket, bookId],
   );
 
-  if (!loaded) return <div style={{ color: '#d8c8a0', padding: 24 }}>Opening…</div>;
+  if (!loaded)
+    return <div style={{ color: '#d8c8a0', padding: 24 }}>Opening…</div>;
   if (!book) {
     return (
       <div style={{ color: '#d8c8a0', padding: 24, fontFamily: 'serif' }}>
         This volume is sealed (private, or it doesn’t exist).{' '}
-        <button onClick={() => { router.push('library', {}); }} data-id="library">← Library</button>
+        <button
+          onClick={() => {
+            router.push('library', {});
+          }}
+          data-id="library"
+        >
+          ← Library
+        </button>
       </div>
     );
   }
@@ -66,7 +86,10 @@ export default function BookPage({ bookId }: { bookId: string }): React.ReactEle
   const step = isNarrow ? 1 : 2;
 
   const bookWidth = Math.min(900, vw - 32) - 36;
-  const colWidth = Math.max(220, Math.floor((isNarrow ? bookWidth : bookWidth / 2) - 56));
+  const colWidth = Math.max(
+    220,
+    Math.floor((isNarrow ? bookWidth : bookWidth / 2) - 56),
+  );
 
   function setPage(idx: number, md: string): void {
     setBook((prev) => {
@@ -80,14 +103,22 @@ export default function BookPage({ bookId }: { bookId: string }): React.ReactEle
 
   function renderPage(idx: number): React.ReactNode {
     if (idx >= pages.length) {
-      return <div style={{ color: '#9a8a64', fontFamily: 'monospace', fontSize: 12 }}>— end —</div>;
+      return (
+        <div
+          style={{ color: '#9a8a64', fontFamily: 'monospace', fontSize: 12 }}
+        >
+          — end —
+        </div>
+      );
     }
     return (
       <MarkdownEditor
         value={pages[idx] ?? ''}
         disabled={!isOwner}
         placeholder={isOwner ? 'Write…  (type # for a big heading)' : ''}
-        onValueChanged={(md) => { setPage(idx, md); }}
+        onValueChanged={(md) => {
+          setPage(idx, md);
+        }}
         menuAbove
         limitedToolbar
         width={colWidth}
@@ -116,13 +147,23 @@ export default function BookPage({ bookId }: { bookId: string }): React.ReactEle
         }}
       >
         <button
-          onClick={() => { router.push('library', {}); }}
-          style={btn('#e8b84b', '#c9a24b')} data-id="library-2"
+          onClick={() => {
+            router.push('library', {});
+          }}
+          style={btn('#e8b84b', '#c9a24b')}
+          data-id="library-2"
         >
           ← Library
         </button>
         {isOwner && (
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+          <div
+            style={{
+              display: 'flex',
+              gap: 10,
+              alignItems: 'center',
+              flexWrap: 'wrap',
+            }}
+          >
             <SharingPills
               value={book.sharing}
               onChange={(s) => {
@@ -136,17 +177,21 @@ export default function BookPage({ bookId }: { bookId: string }): React.ReactEle
                 setBook({ ...book, pages: next });
                 scheduleSave({ pages: next });
               }}
-              style={btn('#e8b84b', '#c9a24b')} data-id="page"
+              style={btn('#e8b84b', '#c9a24b')}
+              data-id="page"
             >
               + Page
             </button>
             <button
               onClick={() => {
                 if (confirm('Delete this volume?')) {
-                  void socket.request('deleteBook', { bookId }).then(() => { router.push('library', {}); });
+                  void socket.request('deleteBook', { bookId }).then(() => {
+                    router.push('library', {});
+                  });
                 }
               }}
-              style={btn('#8a3a3a', '#5e2b2b')} data-id="delete"
+              style={btn('#8a3a3a', '#5e2b2b')}
+              data-id="delete"
             >
               Delete
             </button>
@@ -158,8 +203,12 @@ export default function BookPage({ bookId }: { bookId: string }): React.ReactEle
         left={renderPage(pageIndex)}
         right={renderPage(pageIndex + 1)}
         pageLabel={`— ${pageIndex + 1}${isNarrow ? '' : `–${lastShown}`} of ${pages.length} —`}
-        onPrev={() => { setPageIndex((i) => Math.max(0, i - step)); }}
-        onNext={() => { setPageIndex((i) => (i + step < pages.length ? i + step : i)); }}
+        onPrev={() => {
+          setPageIndex((i) => Math.max(0, i - step));
+        }}
+        onNext={() => {
+          setPageIndex((i) => (i + step < pages.length ? i + step : i));
+        }}
       />
     </>
   );

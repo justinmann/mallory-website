@@ -16,7 +16,10 @@ describe('BookSchema', () => {
   });
   it('rejects an unknown visibility', () => {
     expect(() =>
-      BookSchema.parse({ ...valid, sharing: { visibility: 'world', sharedWith: [] } }),
+      BookSchema.parse({
+        ...valid,
+        sharing: { visibility: 'world', sharedWith: [] },
+      }),
     ).toThrow();
   });
   it('defaults pages to a single empty page', () => {

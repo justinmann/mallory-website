@@ -1,4 +1,12 @@
-import { authReq, req, defineMessages, defineRequests, frameworkMessages, frameworkRequests, z } from 'ugly-app/shared';
+import {
+  authReq,
+  req,
+  defineMessages,
+  defineRequests,
+  frameworkMessages,
+  frameworkRequests,
+  z,
+} from 'ugly-app/shared';
 
 // ─── Book shapes ──────────────────────────────────────────────────────────────
 // The full persisted book (what the server returns), and the patch shape used to
@@ -22,10 +30,12 @@ const BookPatch = z.object({
   coverStyle: z.enum(['oxblood', 'forest', 'plain']).optional(),
   pages: z.array(z.string().max(50_000)).max(500).optional(),
   lecternPos: z.object({ x: z.number(), y: z.number() }).optional(),
-  sharing: z.object({
-    visibility: z.enum(['private', 'specific', 'public']),
-    sharedWith: z.array(z.string()).max(200),
-  }).optional(),
+  sharing: z
+    .object({
+      visibility: z.enum(['private', 'specific', 'public']),
+      sharedWith: z.array(z.string()).max(200),
+    })
+    .optional(),
 });
 
 export const requests = defineRequests({

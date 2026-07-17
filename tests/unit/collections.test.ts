@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { TodoSchema, ConversationSchema, MessageSchema, collections } from '../../shared/collections';
+import {
+  TodoSchema,
+  ConversationSchema,
+  MessageSchema,
+  collections,
+} from '../../shared/collections';
 
 describe('Collection schemas', () => {
   it('TodoSchema validates a valid todo', () => {

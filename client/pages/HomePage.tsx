@@ -8,10 +8,12 @@ export default function HomePage(): React.ReactElement {
     <PageLayout>
       <div style={{ maxWidth: 640, margin: '0 auto', padding: 24 }}>
         <Card>
-          <Text size="xl" weight="bold">Welcome</Text>
+          <Text size="xl" weight="bold">
+            Welcome
+          </Text>
           <Text style={{ marginTop: 8 }}>
-            This is the home page. Edit <code>client/pages/HomePage.tsx</code>
-            {' '}to build your app.
+            This is the home page. Edit <code>client/pages/HomePage.tsx</code>{' '}
+            to build your app.
           </Text>
         </Card>
       </div>

@@ -16,10 +16,15 @@ export function SharingPills({
 }): React.ReactElement {
   const [draft, setDraft] = useState('');
 
-  const pill = (v: Sharing['visibility'], label: string): React.ReactElement => (
+  const pill = (
+    v: Sharing['visibility'],
+    label: string,
+  ): React.ReactElement => (
     <button
       key={v}
-      onClick={() => { onChange({ ...value, visibility: v }); }}
+      onClick={() => {
+        onChange({ ...value, visibility: v });
+      }}
       style={{
         borderRadius: 20,
         padding: '4px 10px',
@@ -29,14 +34,22 @@ export function SharingPills({
         color: value.visibility === v ? '#fff' : '#d8c8a0',
         fontFamily: 'monospace',
         fontSize: 12,
-      }} data-id="button"
+      }}
+      data-id="button"
     >
       {label}
     </button>
   );
 
   return (
-    <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
+    <div
+      style={{
+        display: 'flex',
+        gap: 6,
+        alignItems: 'center',
+        flexWrap: 'wrap',
+      }}
+    >
       {pill('private', 'Private')}
       {pill('specific', 'Specific')}
       {pill('public', 'Public')}
@@ -44,9 +57,12 @@ export function SharingPills({
         <span style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
           <input
             value={draft}
-            onChange={(e) => { setDraft(e.target.value); }}
+            onChange={(e) => {
+              setDraft(e.target.value);
+            }}
             placeholder="user id"
-            style={{ fontFamily: 'monospace', fontSize: 12, width: 90 }} data-id="user-id"
+            style={{ fontFamily: 'monospace', fontSize: 12, width: 90 }}
+            data-id="user-id"
           />
           <button
             onClick={() => {
@@ -55,11 +71,14 @@ export function SharingPills({
                 onChange({ ...value, sharedWith: [...value.sharedWith, id] });
               }
               setDraft('');
-            }} data-id="add"
+            }}
+            data-id="add"
           >
             add
           </button>
-          <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#9a8a64' }}>
+          <span
+            style={{ fontFamily: 'monospace', fontSize: 11, color: '#9a8a64' }}
+          >
             {value.sharedWith.join(', ')}
           </span>
         </span>

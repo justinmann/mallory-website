@@ -24,7 +24,10 @@ type BookHandlers = Pick<
 // Build a brand-new book document. Pure (no DB) so it can be unit-tested.
 export function buildNewBook(
   ownerId: string,
-  opts: { title?: string | undefined; coverStyle?: Book['coverStyle'] | undefined },
+  opts: {
+    title?: string | undefined;
+    coverStyle?: Book['coverStyle'] | undefined;
+  },
 ): Book {
   return {
     _id: nanoid(),
