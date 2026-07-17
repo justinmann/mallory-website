@@ -186,8 +186,8 @@ const app = createApp(
                   .join('');
           },
         },
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       },
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       convDeps,
     );
 
