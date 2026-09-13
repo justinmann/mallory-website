@@ -83,7 +83,7 @@ export default function VideoRoomTestPage(): React.ReactElement {
     addLog(`Joining room: ${roomId}`);
 
     try {
-      const stream = await handleGetMedia();
+      await handleGetMedia();
 
       // Request to join the video room via WebSocket
       const _result = (await socket.send('vr:join', { roomId })) as {
@@ -102,7 +102,6 @@ export default function VideoRoomTestPage(): React.ReactElement {
       );
 
       setJoined(true);
-      void stream; // used above
     } catch (err) {
       addLog(
         `Join failed: ${err instanceof Error ? err.message : String(err)}`,

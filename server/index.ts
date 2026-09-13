@@ -13,7 +13,6 @@ import {
 import { nanoid } from 'nanoid';
 import { enableConversations } from 'ugly-app/conversation/server';
 import { enableCollab } from 'ugly-app/collab/server';
-import type { WorkerHandlers } from 'ugly-app/shared';
 import { dbDefaults } from 'ugly-app/shared';
 import { messages, requests } from '../shared/api';
 import type { Todo } from '../shared/collections';
@@ -25,8 +24,6 @@ import en from '../shared/lang/en';
 import es from '../shared/lang/es';
 import { pages } from '../shared/pages';
 import { stringsDef } from '../shared/strings';
-
-const cronHandlers: WorkerHandlers<typeof cronTasks> = {};
 
 const app = createApp(
   { requests, messages },
@@ -137,7 +134,7 @@ const app = createApp(
       criticalKeys: stringsDef.criticalKeys,
       getTable: (lang) => tables[lang] ?? tables[stringsDef.defaultLang]!,
     });
-    configurator.setWorkers(cronTasks, cronHandlers);
+    configurator.setWorkers(cronTasks, {});
     configurator.setOnEmail(async (inbound: InboundEmail) => {
       await Promise.resolve();
       console.log('[Email] Received:', {

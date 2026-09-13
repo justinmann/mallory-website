@@ -20,7 +20,6 @@ import {
   createWorkersApp,
 } from 'ugly-app/server/adapter/workers';
 import type { RequestHandlers } from 'ugly-app';
-import type { WorkerHandlers } from 'ugly-app/shared';
 
 import { messages, requests } from '../shared/api';
 import { collections } from '../shared/collections';
@@ -34,16 +33,13 @@ const requestHandlers: Partial<RequestHandlers<typeof requests>> = {
   ...createBookHandlers(),
 };
 
-// Cron handlers run on Cloudflare Cron Triggers (matches the schedule
-// declared in `shared/cron.ts`).
-const cronHandlers: WorkerHandlers<typeof cronTasks> = {};
-
 const app = createWorkersApp(
   { requests, messages },
   requestHandlers,
   collections,
   (cfg) => {
-    cfg.setWorkers(cronTasks, cronHandlers);
+    // No cron handlers: `shared/cron.ts` declares an empty registry.
+    cfg.setWorkers(cronTasks, {});
   },
 );
 
